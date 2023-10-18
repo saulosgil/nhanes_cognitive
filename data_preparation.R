@@ -41,6 +41,8 @@ DEMO_11 <- foreign::read.xport(tf)[, c("SEQN",
                                        "DMDBORN4",
                                        "DMDEDUC2",
                                        "INDHHIN2",
+                                       "SDMVSTRA",
+                                       "SDMVPSU",
                                        "WTINT2YR",
                                        "WTMEC2YR"
                                        )]
@@ -57,9 +59,11 @@ DEMO_13 <- foreign::read.xport(tf)[, c("SEQN",
                                        "DMDBORN4",
                                        "DMDEDUC2",
                                        "INDHHIN2",
+                                       "SDMVSTRA",
+                                       "SDMVPSU",
                                        "WTINT2YR",
                                        "WTMEC2YR"
-                                       )]
+)]
 
 # Cognitive functioning------------------------------------------------------------------------
 # 11-12
