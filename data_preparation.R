@@ -188,7 +188,7 @@ df <- COGN_DEMO_PA
 # testing duplicates
 
 df |>
-  dplyr::distinct(SEQN, .keep_all = TRUE) # testing duplicade rows - "None" NEED TREATMENT!
+  dplyr::distinct(SEQN, .keep_all = TRUE) # testing duplicade rows - "None"
 
 # Created new variables -----------------------------------------------------------------------
 
