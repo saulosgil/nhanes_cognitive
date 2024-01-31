@@ -358,6 +358,16 @@ One <-
     PA_CLASS = case_when(PATOTAL >= 150 ~ "ATIVO",
                          PATOTAL < 150 ~ "INATIVO")
   ) |>
+  # to create BMI and obesity class
+  dplyr::mutate(
+    BMXHT = BMXHT / 100,
+    BMI = BMXWT / (BMXHT^2),
+    OBESITY = case_when(BMI >= 30 ~ "OBESO",
+                        BMI < 30 ~ "NORMAL"),
+    # create AGE CLASS
+    AGE_CLASS = case_when(RIDAGEYR < 80 ~ "A_<80",
+                          RIDAGEYR >= 80 ~ "B_>=80")
+    ) |>
   # To create the variable INCAPAZ - PRIMARY OUTCOME
   dplyr::mutate(
     inAnalysis = (
