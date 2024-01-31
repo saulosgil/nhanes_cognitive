@@ -14,7 +14,6 @@
 #+ message = FALSE, warning=FALSE
 library(tidyverse)
 library(survey)
-library(GGally)
 library(sjPlot)
 #'
 options(survey.lonely.psu='adjust')
@@ -393,6 +392,9 @@ NHANES_all <- svydesign(data=One, id=~SDMVPSU, strata=~SDMVSTRA, weights=~WTMEC2
 # Create a survey design object for the subset of interest: adults aged 20 and over with a valid depression score
 # Subsetting the original survey design object ensures we keep the design information about the number of clusters and strata
 NHANES <- subset(NHANES_all, inAnalysis)
+
+# to verify number of protein < 0.80
+nrow(NHANES$variables)
 
 # Exploratory analysis ------------------------------------------------------------------------
 # General Descriptive and distribution analysis
