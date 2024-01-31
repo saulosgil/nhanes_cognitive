@@ -152,6 +152,74 @@ PA_13 <- foreign::read.xport(tf)[, c("SEQN",
                                      "PAQ710",
                                      "PAQ715",
                                      "PAAQUEX")]
+
+# Type 2 diabetes --------------------------------------------------------------------------
+# 11-12
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/DIQ_G.XPT", tf <- tempfile(), mode="wb")
+DM_11 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "DIQ010",
+                                     "DIQ175B",
+                                     "DIQ175J")]
+
+# 13-14
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DIQ_H.XPT", tf <- tempfile(), mode="wb")
+DM_13 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "DIQ010",
+                                     "DIQ175B",
+                                     "DIQ175J")]
+
+# HAS ----------------------------------------------------------------------------------------
+# 11-12
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/BPQ_G.XPT", tf <- tempfile(), mode="wb")
+HAS_11 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "BPQ040A")]
+
+# 13-14
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/BPQ_H.XPT", tf <- tempfile(), mode="wb")
+HAS_13 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "BPQ040A")]
+
+# Cancer, coranary disease, IAM and AVC ---------------------------------------------------------
+# 11-12
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/MCQ_G.XPT", tf <- tempfile(), mode="wb")
+COMORB_11 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "MCQ160C",
+                                     "MCQ220",
+                                     "MCQ160E",
+                                     "MCQ160F")]
+
+# 13-14
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/MCQ_H.XPT", tf <- tempfile(), mode="wb")
+COMORB_13 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "MCQ160C",
+                                     "MCQ220",
+                                     "MCQ160E",
+                                     "MCQ160F")]
+
+# TABACCO --------------------------------------------------------------------------------------
+# 11-12
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/SMQ_G.XPT", tf <- tempfile(), mode="wb")
+TABACO_11 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "SMQ020")]
+
+# 13-14
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/SMQ_H.XPT", tf <- tempfile(), mode="wb")
+TABACO_13 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "SMQ020")]
+
+# Weight and height ----------------------------------------------------------------------------
+# 11-12
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/BMX_G.XPT", tf <- tempfile(), mode="wb")
+BODY_11 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "BMXWT",
+                                     "BMXHT")]
+
+# 13-14
+download.file("https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/BMX_H.XPT", tf <- tempfile(), mode="wb")
+BODY_13 <- foreign::read.xport(tf)[, c("SEQN",
+                                     "BMXWT",
+                                     "BMXHT")]
+
 # Append Files ---------------------------------------------------------------------------------
 # Demographics
 DEMO <- dplyr::bind_rows(DEMO_11,
@@ -174,6 +242,40 @@ PA <- dplyr::bind_rows(PA_11,
 PA |> dplyr::distinct(SEQN, .keep_all = TRUE)|>  # testing duplicade rows - "none"
   nrow() # testing duplicade rows - "none"
 
+# Type 2 diabetes
+DM <- dplyr::bind_rows(DM_11,
+                       DM_13)
+
+DM |> dplyr::distinct(SEQN, .keep_all = TRUE)|>  # testing duplicade rows - "none"
+  nrow() # testing duplicade rows - "none"
+
+# HAS
+HAS <- dplyr::bind_rows(HAS_11,
+                        HAS_13)
+
+HAS |> dplyr::distinct(SEQN, .keep_all = TRUE)|>  # testing duplicade rows - "none"
+  nrow() # testing duplicade rows - "none"
+
+# COMORB
+COMORB <- dplyr::bind_rows(COMORB_11,
+                           COMORB_13)
+
+COMORB |> dplyr::distinct(SEQN, .keep_all = TRUE)|>  # testing duplicade rows - "none"
+  nrow() # testing duplicade rows - "none"
+
+# TABACCO
+TABACO <- dplyr::bind_rows(TABACO_11,
+                           TABACO_13)
+
+TABACO |> dplyr::distinct(SEQN, .keep_all = TRUE)|>  # testing duplicade rows - "none"
+  nrow() # testing duplicade rows - "none"
+
+# BODY
+BODY <- dplyr::bind_rows(BODY_11,
+                         BODY_13)
+
+BODY |> dplyr::distinct(SEQN, .keep_all = TRUE)|>  # testing duplicade rows - "none"
+  nrow() # testing duplicade rows - "none"
 
 # Merge COGN and DEMO files
 COGN_DEMO <-
@@ -183,8 +285,28 @@ COGN_DEMO <-
 COGN_DEMO_PA <-
   dplyr::left_join(COGN_DEMO, PA, by="SEQN")
 
+# Merge COGN_DEMO_PA and DM
+COGN_DEMO_PA_DM <-
+  dplyr::left_join(COGN_DEMO_PA, DM, by="SEQN")
+
+# Merge COGN_DEMO_PA_DM and HAS
+COGN_DEMO_PA_DM_HAS <-
+  dplyr::left_join(COGN_DEMO_PA_DM, HAS, by="SEQN")
+
+# Merge COGN_DEMO_PA_DM_HAS and COMORB
+COGN_DEMO_PA_DM_HAS_COMORB <-
+  dplyr::left_join(COGN_DEMO_PA_DM_HAS, COMORB, by="SEQN")
+
+# Merge COGN_DEMO_PA_DM_HAS_COMORB and TABACCO
+COGN_DEMO_PA_DM_HAS_COMORB_TABACO <-
+  dplyr::left_join(COGN_DEMO_PA_DM_HAS_COMORB, TABACO, by="SEQN")
+
+# Merge COGN_DEMO_PA_DM_HAS_COMORB_TABACCO
+COGN_DEMO_PA_DM_HAS_COMORB_TABACO_BODY <-
+  dplyr::left_join(COGN_DEMO_PA_DM_HAS_COMORB_TABACO, BODY, by="SEQN")
+
 # Rename to new object - df
-df <- COGN_DEMO_PA
+df <- COGN_DEMO_PA_DM_HAS_COMORB_TABACO_BODY
 
 # testing duplicates
 df |>
