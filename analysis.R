@@ -12,6 +12,9 @@ for (p in c("base", "survey","dplyr")) {
   cat(p, ": ", as.character(packageVersion(p)), "\n")
 }
 
+# tirar notação cientifica
+options(scipen=999)
+
 # Lendo a base --------------------------------------------------------------------------------
 df <- read_rds(file = "df.rds")
 colnames(df)
@@ -60,13 +63,26 @@ One <-
                         BMI < 30 ~ "NORMAL"),
     # create AGE CLASS
     AGE_CLASS = case_when(RIDAGEYR < 80 ~ "A_<80",
-                          RIDAGEYR >= 80 ~ "B_>=80")
+                          RIDAGEYR >= 80 ~ "B_>=80"),
+    # best CFDCST1
+    CERAD_BEST = apply(df[,5:7], MARGIN = 1,FUN = max),
+    # CFDAST_SCORE
+    CFDAST_SCORE = case_when(
+      CFDAST <= 5 ~ "0 pontos",
+      CFDAST > 5 & CFDAST <= 8 ~ "1 pontos",
+      CFDAST > 8 & CFDAST <= 11 ~ "2 pontos",
+      CFDAST > 11 & CFDAST <= 14 ~ "3 pontos",
+      CFDAST > 14 ~ "4 pontos"
+    )
   ) |>
-  # To create the variable INCAPAZ - PRIMARY OUTCOME
+  # final survey
   dplyr::mutate(
     inAnalysis = (
       RIDAGEYR >= 65 &
-        !is.na(PA_CLASS)
+        !is.na(PATOTAL) &
+        !is.na(CFDAST) &
+        !is.na(CFDDS) &
+        !is.na(CERAD_BEST)
       # ENERGY_STATUS == 'LIKELY' & # veriricar se iremos incluir consumo alimentar no projeto
       # !is.na(ENERGY_PT_MODEL) &
       # DIQ010 < 3 & # Diabetes (1 = yes; 2 = no)
@@ -97,27 +113,39 @@ glimpse(NHANES$variables)
 skimr::skim_without_charts(NHANES$variables)
 DataExplorer::plot_missing(NHANES$variables)
 
-
 NHANES$variables |>
   select(PATOTAL,
-         CFDCST1,
-         CFDCST2,
+         CFDDS,
          CFDAST,
-         CFDDS) |>
+         CERAD_BEST) |>
   cor(use = "pairwise.complete.obs") |>
   corrplot::corrplot(method = "number")
 
-# Analysis - PA continua ------------------------------------------------------------------------------------
+# Analysis - PA categórica ------------------------------------------------------------------------------------
 ## crude logistic regression
 crude_svy <-
   survey::svyglm(
-    formula = as.factor(internação_ano) ~ as.factor(PA_CLASS),
-    design = NHANES,
-    family = binomial(link = "logit")
-  )
+    formula = CFDDS ~ PA_CLASS,
+    design = NHANES)
 
 # Summary
 summary(crude_svy)
-cbind(odds = exp(crude_svy$coefficients), exp(confint(crude_svy)))
-sjPlot::tab_model(crude_svy)
+
+## crude logistic regression
+crude_svy <-
+  survey::svyglm(
+    formula = CFDAST ~ PA_CLASS,
+    design = NHANES)
+
+# Summary
+summary(crude_svy)
+
+## crude logistic regression
+crude_svy <-
+  survey::svyglm(
+    formula = CERAD_BEST ~ PA_CLASS,
+    design = NHANES)
+
+# Summary
+summary(crude_svy)
 
