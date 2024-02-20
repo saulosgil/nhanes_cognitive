@@ -116,12 +116,102 @@ DataExplorer::plot_missing(NHANES$variables)
 NHANES$variables |>
   select(PATOTAL,
          CFDDS,
+         CFDCSR,
          CFDAST,
          CERAD_BEST) |>
   cor(use = "pairwise.complete.obs") |>
-  corrplot::corrplot(method = "number")
+  corrplot::corrplot(method = "number",sig.level = 0.05)
 
-# Analysis - PA categórica ------------------------------------------------------------------------------------
+# analyses ------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
+bgrouped <-
+  NHANES$variable |>
+  dplyr::group_by(PA_CLASS) |>
+  dplyr::summarise(media = mean(CFDDS))
+
+NHANES$variables |>
+  ggplot(aes(x=PA_CLASS,y=CFDDS))+
+  geom_boxplot(outlier.size = 1,
+               notch = TRUE,
+               show.legend = FALSE)+
+  geom_point(data = bgrouped,
+             mapping = aes(x = PA_CLASS,
+                           y = media),
+             show.legend = FALSE,
+             shape = 3,
+             size = 2,
+             stroke = 1.5)+
+  theme_bw()
+
+t.test(NHANES$variable$CFDDS ~ NHANES$variable$PA_CLASS,
+       NHANES$variable)
+# ---------------------------------------------------------------------------------------------
+bgrouped <-
+  NHANES$variable |>
+  dplyr::group_by(PA_CLASS) |>
+  dplyr::summarise(media = mean(CFDCSR))
+
+NHANES$variables |>
+  ggplot(aes(x=PA_CLASS,y=CFDCSR))+
+  geom_boxplot(outlier.size = 1,
+               notch = TRUE,
+               show.legend = FALSE)+
+  geom_point(data = bgrouped,
+             mapping = aes(x = PA_CLASS,
+                           y = media),
+             show.legend = FALSE,
+             shape = 3,
+             size = 2,
+             stroke = 1.5)+
+  theme_bw()
+
+t.test(NHANES$variable$CFDCSR ~ NHANES$variable$PA_CLASS,
+       NHANES$variable)
+# ---------------------------------------------------------------------------------------------
+bgrouped <-
+  NHANES$variable |>
+  dplyr::group_by(PA_CLASS) |>
+  dplyr::summarise(media = mean(CFDAST))
+
+NHANES$variables |>
+  ggplot(aes(x=PA_CLASS, y=CFDAST))+
+  geom_boxplot(outlier.size = 1,
+               notch = TRUE,
+               show.legend = FALSE)+
+  geom_point(data = bgrouped,
+             mapping = aes(x = PA_CLASS,
+                           y = media),
+             show.legend = FALSE,
+             shape = 3,
+             size = 2,
+             stroke = 1.5)+
+  theme_bw()
+
+t.test(NHANES$variable$CFDAST ~ NHANES$variable$PA_CLASS,
+       NHANES$variable)
+# ---------------------------------------------------------------------------------------------
+bgrouped <-
+  NHANES$variable |>
+  dplyr::group_by(PA_CLASS) |>
+  dplyr::summarise(media = mean(CERAD_BEST))
+
+NHANES$variables |>
+  ggplot(aes(x=PA_CLASS,y=CERAD_BEST))+
+  geom_boxplot(outlier.size = 1,
+               notch = TRUE,
+               show.legend = FALSE)+
+  geom_point(data = bgrouped,
+             mapping = aes(x = PA_CLASS,
+                           y = media),
+             show.legend = FALSE,
+             shape = 3,
+             size = 2,
+             stroke = 1.5)+
+  theme_bw()
+
+t.test(NHANES$variable$CERAD_BEST ~ NHANES$variable$PA_CLASS,
+       NHANES$variable)
+
 ## crude logistic regression
 crude_svy <-
   survey::svyglm(
@@ -149,3 +239,11 @@ crude_svy <-
 # Summary
 summary(crude_svy)
 
+## crude logistic regression
+crude_svy <-
+  survey::svyglm(
+    formula = CFDCSR ~ PA_CLASS,
+    design = NHANES)
+
+# Summary
+summary(crude_svy)
