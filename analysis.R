@@ -82,11 +82,12 @@ One <-
         !is.na(PATOTAL) &
         !is.na(CFDAST) &
         !is.na(CFDDS) &
-        !is.na(CERAD_BEST)
-      # ENERGY_STATUS == 'LIKELY' & # veriricar se iremos incluir consumo alimentar no projeto
-      # !is.na(ENERGY_PT_MODEL) &
-      # DIQ010 < 3 & # Diabetes (1 = yes; 2 = no)
-      # MCQ160F < 3 & # AVC (1 = yes; 2 = no)
+        !is.na(CERAD_BEST)&
+        !is.na(DMDEDUC2)&
+        !is.na(CFDCSR)&
+        DIQ010 < 3 & # Diabetes (1 = yes; 2 = no)
+        MCQ160F < 3 & # AVC (1 = yes; 2 = no)
+        BPQ040A < 3  # HAS (1 = yes; 2 = no)
       # MCQ160B < 3 & # ICC (1 = yes; 2 = no)
       # MCQ160E < 3 & # IAM (1 = yes; 2 = no)
       # MCQ220 < 3 & # cancer (1 = yes; 2 = no)
@@ -129,19 +130,23 @@ bgrouped <-
   dplyr::group_by(PA_CLASS) |>
   dplyr::summarise(media = mean(CFDDS))
 
-NHANES$variables |>
-  ggplot(aes(x=PA_CLASS,y=CFDDS))+
+g1 <-
+  NHANES$variables |>
+  ggplot(aes(x=PA_CLASS,y=CFDDS,color = PA_CLASS))+
   geom_boxplot(outlier.size = 1,
-               notch = TRUE,
+               notch = FALSE,
                show.legend = FALSE)+
   geom_point(data = bgrouped,
              mapping = aes(x = PA_CLASS,
                            y = media),
+             color = 'black',
              show.legend = FALSE,
              shape = 3,
              size = 2,
              stroke = 1.5)+
-  theme_bw()
+  theme_classic() +
+  xlab(label = "")
+
 
 t.test(NHANES$variable$CFDDS ~ NHANES$variable$PA_CLASS,
        NHANES$variable)
@@ -151,19 +156,21 @@ bgrouped <-
   dplyr::group_by(PA_CLASS) |>
   dplyr::summarise(media = mean(CFDCSR))
 
-NHANES$variables |>
-  ggplot(aes(x=PA_CLASS,y=CFDCSR))+
+g2 <-
+  NHANES$variables |>
+  ggplot(aes(x=PA_CLASS,y=CFDCSR,color=PA_CLASS))+
   geom_boxplot(outlier.size = 1,
-               notch = TRUE,
                show.legend = FALSE)+
   geom_point(data = bgrouped,
              mapping = aes(x = PA_CLASS,
                            y = media),
+             color = 'black',
              show.legend = FALSE,
              shape = 3,
              size = 2,
              stroke = 1.5)+
-  theme_bw()
+  theme_classic() +
+  xlab(label = '')
 
 t.test(NHANES$variable$CFDCSR ~ NHANES$variable$PA_CLASS,
        NHANES$variable)
@@ -173,19 +180,22 @@ bgrouped <-
   dplyr::group_by(PA_CLASS) |>
   dplyr::summarise(media = mean(CFDAST))
 
-NHANES$variables |>
-  ggplot(aes(x=PA_CLASS, y=CFDAST))+
+g3 <-
+  NHANES$variables |>
+  ggplot(aes(x=PA_CLASS, y=CFDAST,color=PA_CLASS))+
   geom_boxplot(outlier.size = 1,
-               notch = TRUE,
                show.legend = FALSE)+
   geom_point(data = bgrouped,
              mapping = aes(x = PA_CLASS,
                            y = media),
+             color = 'black',
              show.legend = FALSE,
              shape = 3,
              size = 2,
              stroke = 1.5)+
-  theme_bw()
+  theme_classic()+
+  xlab(label = '')
+
 
 t.test(NHANES$variable$CFDAST ~ NHANES$variable$PA_CLASS,
        NHANES$variable)
@@ -195,22 +205,30 @@ bgrouped <-
   dplyr::group_by(PA_CLASS) |>
   dplyr::summarise(media = mean(CERAD_BEST))
 
-NHANES$variables |>
-  ggplot(aes(x=PA_CLASS,y=CERAD_BEST))+
+g4 <-
+  NHANES$variables |>
+  ggplot(aes(x=PA_CLASS,y=CERAD_BEST,color=PA_CLASS))+
   geom_boxplot(outlier.size = 1,
-               notch = TRUE,
                show.legend = FALSE)+
   geom_point(data = bgrouped,
              mapping = aes(x = PA_CLASS,
                            y = media),
+             color = 'black',
              show.legend = FALSE,
              shape = 3,
              size = 2,
              stroke = 1.5)+
-  theme_bw()
+  theme_classic() +
+  xlab(label = '')
 
 t.test(NHANES$variable$CERAD_BEST ~ NHANES$variable$PA_CLASS,
        NHANES$variable)
+
+# layout --------------------------------------------------------------------------------------
+library(patchwork)
+(g4+g2)/(g3+g1)
+
+# ---------------------------------------------------------------------------------------------
 
 ## crude logistic regression
 crude_svy <-
