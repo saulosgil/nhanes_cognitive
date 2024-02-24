@@ -83,8 +83,20 @@ One <-
         !is.na(CFDAST) &
         !is.na(CFDDS) &
         !is.na(CERAD_BEST)&
-        !is.na(DMDEDUC2)&
         !is.na(CFDCSR)&
+        !is.na(OBESITY)&
+        PAQ610 < 8 &
+        PAD615 < 841 &
+        PAQ625 < 8 &
+        PAD630 < 841 &
+        PAQ640 < 8 &
+        PAD645 < 661 &
+        PAQ655 < 7 &
+        PAD660 < 481 &
+        PAQ670 < 8 &
+        PAD675 < 540 &
+        DMDEDUC2 < 7 & # escolaridade
+        SMQ020 < 3 & # tabacco (1 = yes; 2 = no)
         DIQ010 < 3 & # Diabetes (1 = yes; 2 = no)
         MCQ160F < 3 & # AVC (1 = yes; 2 = no)
         BPQ040A < 3  # HAS (1 = yes; 2 = no)
@@ -228,9 +240,8 @@ t.test(NHANES$variable$CERAD_BEST ~ NHANES$variable$PA_CLASS,
 library(patchwork)
 (g4+g2)/(g3+g1)
 
-# ---------------------------------------------------------------------------------------------
-
-## crude logistic regression
+# CFDDS ---------------------------------------------------------------------------------------------
+## crude linear regression
 crude_svy <-
   survey::svyglm(
     formula = CFDDS ~ PA_CLASS,
@@ -238,8 +249,30 @@ crude_svy <-
 
 # Summary
 summary(crude_svy)
+sjPlot::tab_model(crude_svy)
 
-## crude logistic regression
+## adjusted linear regression - age and sex
+m1_crude_svy <-
+  survey::svyglm(
+    formula = CFDDS ~ PA_CLASS + AGE_CLASS + RIAGENDR,
+    design = NHANES)
+
+# Summary
+summary(m1_crude_svy)
+sjPlot::tab_model(m1_crude_svy)
+
+## adjusted linear regression - CFDDS - model 1 + DMDEDUC2, SMQ020, BPQ040A, MCQ160F, OBESITY, DIQ010
+m2_crude_svy <-
+  survey::svyglm(
+    formula = CFDDS ~ PA_CLASS + AGE_CLASS + RIAGENDR + DMDEDUC2 + SMQ020 + BPQ040A + MCQ160F + OBESITY + DIQ010,
+    design = NHANES)
+
+# Summary
+summary(m2_crude_svy)
+sjPlot::tab_model(m2_crude_svy)
+
+# CFDAST ---------------------------------------------------------------------------------------------
+## crude linear regression
 crude_svy <-
   survey::svyglm(
     formula = CFDAST ~ PA_CLASS,
@@ -247,8 +280,30 @@ crude_svy <-
 
 # Summary
 summary(crude_svy)
+sjPlot::tab_model(crude_svy)
 
-## crude logistic regression
+## adjusted linear regression - age and sex
+m1_crude_svy <-
+  survey::svyglm(
+    formula = CFDAST ~ PA_CLASS + AGE_CLASS + RIAGENDR,
+    design = NHANES)
+
+# Summary
+summary(m1_crude_svy)
+sjPlot::tab_model(m1_crude_svy)
+
+## adjusted linear regression - CFDDS - model 1 + DMDEDUC2, SMQ020, BPQ040A, MCQ160F, OBESITY, DIQ010
+m2_crude_svy <-
+  survey::svyglm(
+    formula = CFDAST ~ PA_CLASS + AGE_CLASS + RIAGENDR + DMDEDUC2 + SMQ020 + BPQ040A + MCQ160F + OBESITY + DIQ010,
+    design = NHANES)
+
+# Summary
+summary(m2_crude_svy)
+sjPlot::tab_model(m2_crude_svy)
+
+# CERAD_BEST ---------------------------------------------------------------------------------------------
+## crude linear regression
 crude_svy <-
   survey::svyglm(
     formula = CERAD_BEST ~ PA_CLASS,
@@ -256,8 +311,30 @@ crude_svy <-
 
 # Summary
 summary(crude_svy)
+sjPlot::tab_model(crude_svy)
 
-## crude logistic regression
+## adjusted linear regression - age and sex
+m1_crude_svy <-
+  survey::svyglm(
+    formula = CERAD_BEST ~ PA_CLASS + AGE_CLASS + RIAGENDR,
+    design = NHANES)
+
+# Summary
+summary(m1_crude_svy)
+sjPlot::tab_model(m1_crude_svy)
+
+## adjusted linear regression - CFDDS - model 1 + DMDEDUC2, SMQ020, BPQ040A, MCQ160F, OBESITY, DIQ010
+m2_crude_svy <-
+  survey::svyglm(
+    formula = CERAD_BEST ~ PA_CLASS + AGE_CLASS + RIAGENDR + DMDEDUC2 + SMQ020 + BPQ040A + MCQ160F + OBESITY + DIQ010,
+    design = NHANES)
+
+# Summary
+summary(m2_crude_svy)
+sjPlot::tab_model(m2_crude_svy)
+
+# CFDCSR ---------------------------------------------------------------------------------------------
+## crude linear regression
 crude_svy <-
   survey::svyglm(
     formula = CFDCSR ~ PA_CLASS,
@@ -265,3 +342,25 @@ crude_svy <-
 
 # Summary
 summary(crude_svy)
+sjPlot::tab_model(crude_svy)
+
+## adjusted linear regression - age and sex
+m1_crude_svy <-
+  survey::svyglm(
+    formula = CFDCSR ~ PA_CLASS + AGE_CLASS + RIAGENDR,
+    design = NHANES)
+
+# Summary
+summary(m1_crude_svy)
+sjPlot::tab_model(m1_crude_svy)
+
+## adjusted linear regression - CFDDS - model 1 + DMDEDUC2, SMQ020, BPQ040A, MCQ160F, OBESITY, DIQ010
+m2_crude_svy <-
+  survey::svyglm(
+    formula = CFDCSR ~ PA_CLASS + AGE_CLASS + RIAGENDR + DMDEDUC2 + SMQ020 + BPQ040A + MCQ160F + OBESITY + DIQ010,
+    design = NHANES)
+
+# Summary
+summary(m2_crude_svy)
+sjPlot::tab_model(m2_crude_svy)
+
