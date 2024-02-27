@@ -231,7 +231,8 @@ g4 <-
              size = 2,
              stroke = 1.5)+
   theme_classic() +
-  xlab(label = '')
+  xlab(label = '') +
+  ylab(label = 'CERAD')
 
 t.test(NHANES$variable$CERAD_BEST ~ NHANES$variable$PA_CLASS,
        NHANES$variable)
