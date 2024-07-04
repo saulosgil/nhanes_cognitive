@@ -1,6 +1,6 @@
 # 🧠 Association Between Physical Activity and Cognitive Function in Older Adults 👴 (Research-FMUSP)
 
-## 📒 Descripstion
+## 📒 Description
 - This repository consists of scripts related to downloaded datasets from the National Health and Nutrition Examination Survey (NHANES) and analysis to test whether physical activity is associated with cognitive function in older adults.
 
 ## 🤖 Technologies Used
